@@ -16,7 +16,7 @@ def gen_aa_bcsq(consequence, gene, protein):
         aa_change = protein
     else:
         aa_change = protein
-    if consequence != '':
+    if protein != '':
         aa = '-'.join(map(str, [gene, aa_change]))
     else:
         aa = 'NA'
@@ -93,6 +93,9 @@ def main():
             output.append(aa)
         else:
             output.append('')
+            output.append('')
+            output.append('')
+            output.append('NA')
         
         print('\t'.join(map(str, output)))
     
