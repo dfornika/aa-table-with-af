@@ -1,18 +1,32 @@
 #!/usr/bin/env python3
 
 import argparse
+import re
 
 import pysam
 
 def gen_aa_bcsq(consequence, gene, protein):
-    aa = '-'.join(map(str, [gene, protein]))
+    if consequence == 'synonymous':
+        ref_aa = protein[-1]
+        aa_change = ref_aa + protein
+    elif consequence == 'missense':
+        [ref_pos_aa, alt_pos_aa] = protein.split('>')
+        aa_change = ref_pos_aa[-1] + alt_pos_aa
+    elif re.search('deletion', consequence):
+        aa_change = protein
+    else:
+        aa_change = protein
+    if consequence != '':
+        aa = '-'.join(map(str, [gene, aa_change]))
+    else:
+        aa = 'NA'
     return aa
 
 
 def gen_aa_ann(consequence, gene, protein):
-    aa = ""
     if protein != '':
-        aa = '-'.join(map(str, [gene, protein]))
+        aa_change = protein
+        aa = '-'.join(map(str, [gene, aa_change]))
     else:
         aa = 'NA'
     return aa
