@@ -5,7 +5,8 @@ import re
 
 import pysam
 
-def gen_aa_bcsq(consequence, gene, protein):
+
+def gen_protein_bcsq(consequence, protein):
     if consequence == 'synonymous':
         ref_aa = protein[-1]
         aa_change = ref_aa + protein
@@ -16,16 +17,12 @@ def gen_aa_bcsq(consequence, gene, protein):
         aa_change = protein
     else:
         aa_change = protein
-    if protein != '':
-        aa = '-'.join(map(str, [gene, aa_change]))
-    else:
-        aa = 'NA'
-    return aa
+
+    return aa_change
 
 
-def gen_aa_ann(consequence, gene, protein):
-    if protein != '':
-        aa_change = protein
+def gen_aa(gene, aa_change):
+    if aa_change != '':
         aa = '-'.join(map(str, [gene, aa_change]))
     else:
         aa = 'NA'
@@ -74,22 +71,21 @@ def main():
             bcsq = rec.info['BCSQ'][0].split('|')
             consequence = bcsq[0]
             gene = bcsq[1]
-            protein = bcsq[5]
+            protein = gen_protein_bcsq(consequence, bcsq[5])
             output.append(consequence)
             output.append(gene)
             output.append(protein)
-            aa = gen_aa_bcsq(consequence, gene, protein)
+            aa = gen_aa(gene, protein)
             output.append(aa)
         elif 'ANN' in rec.info:
             ann = rec.info['ANN'][0].split('|')
-            # print(ann)
             consequence = ann[1]
             gene = ann[3]
             protein = ann[10][2:]
             output.append(consequence)
             output.append(gene)
             output.append(protein)
-            aa = gen_aa_ann(consequence, gene, protein)
+            aa = gen_aa(gene, protein)
             output.append(aa)
         else:
             output.append('')
