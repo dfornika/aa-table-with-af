@@ -4,6 +4,20 @@ import argparse
 
 import pysam
 
+def gen_aa_bcsq(consequence, gene, protein):
+    aa = '-'.join(map(str, [gene, protein]))
+    return aa
+
+
+def gen_aa_ann(consequence, gene, protein):
+    aa = ""
+    if protein != '':
+        aa = '-'.join(map(str, [gene, protein]))
+    else:
+        aa = 'NA'
+    return aa
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('vcf')
@@ -46,11 +60,12 @@ def main():
             bcsq = rec.info['BCSQ'][0].split('|')
             consequence = bcsq[0]
             gene = bcsq[1]
-            aa = bcsq[5]
+            protein = bcsq[5]
             output.append(consequence)
             output.append(gene)
+            output.append(protein)
+            aa = gen_aa_bcsq(consequence, gene, protein)
             output.append(aa)
-            output.append('-'.join([gene, aa]))
         elif 'ANN' in rec.info:
             ann = rec.info['ANN'][0].split('|')
             # print(ann)
@@ -60,10 +75,7 @@ def main():
             output.append(consequence)
             output.append(gene)
             output.append(protein)
-            if protein != '':
-                aa = '-'.join(map(str, [gene, protein]))
-            else:
-                aa = 'NA'
+            aa = gen_aa_ann(consequence, gene, protein)
             output.append(aa)
         else:
             output.append('')
